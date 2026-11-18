@@ -1,0 +1,37 @@
+[project]
+name = "deckatron"
+version = "0.1.0"
+description = "Independently deployable A2A services"
+requires-python = ">=3.11"
+dependencies = []
+
+[tool.uv]
+package = false
+
+[tool.uv.workspace]
+members = ["services/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["services/deck-router/tests"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.ty.src]
+include = ["services/deck-router/src", "services/deck-router/tests"]
+
+[dependency-groups]
+dev = [
+    "httpx",
+    "ipykernel",
+    "ipywidgets",
+    "protobuf",
+    "pytest",
+    "ruff",
+    "tqdm",
+    "ty",
+]
