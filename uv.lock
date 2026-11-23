@@ -11,6 +11,7 @@ resolution-markers = [
 members = [
     "deck-router",
     "deckatron",
+    "downstream-mock",
 ]
 
 [[package]]
@@ -487,7 +488,7 @@ wheels = [
 [[package]]
 name = "deck-router"
 version = "0.1.0"
-source = { editable = "services/deck-router" }
+source = { editable = "src/deck-router" }
 dependencies = [
     { name = "a2a-sdk", extra = ["http-server"] },
     { name = "httpx" },
@@ -520,6 +521,7 @@ source = { virtual = "." }
 
 [package.dev-dependencies]
 dev = [
+    { name = "downstream-mock" },
     { name = "httpx" },
     { name = "ipykernel" },
     { name = "ipywidgets" },
@@ -534,6 +536,7 @@ dev = [
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "downstream-mock", editable = "src/mock" },
     { name = "httpx" },
     { name = "ipykernel" },
     { name = "ipywidgets" },
@@ -551,6 +554,25 @@ source = { registry = "https://packagefeedproxy.microsoft.io/pypi/simple" }
 sdist = { url = "https://ms-feed-25.pkgs.visualstudio.com/6f084628-a36d-42cb-934d-057357e379dc/_packaging/49d7402f-07bb-4b18-a9ce-086e6e98a554/pypi/download/distro/1.9/distro-1.9.0.tar.gz", hash = "sha256:2fa77c6fd8940f116ee1d6b94a2f90b13b5ea8d019b98bc8bafdcabcdd9bdbed", size = 60722, upload-time = "2026-07-30T17:39:30Z" }
 wheels = [
     { url = "https://ms-feed-25.pkgs.visualstudio.com/6f084628-a36d-42cb-934d-057357e379dc/_packaging/49d7402f-07bb-4b18-a9ce-086e6e98a554/pypi/download/distro/1.9/distro-1.9.0-py3-none-any.whl", hash = "sha256:7bffd925d65168f85027d8da9af6bddab658135b840670a223589bc0c8ef02b2", size = 20277, upload-time = "2026-07-23T19:04:46Z" },
+]
+
+[[package]]
+name = "downstream-mock"
+version = "0.1.0"
+source = { editable = "src/mock" }
+dependencies = [
+    { name = "a2a-sdk", extra = ["http-server"] },
+    { name = "protobuf" },
+    { name = "starlette" },
+    { name = "uvicorn" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "a2a-sdk", extras = ["http-server"], specifier = "==1.3.0" },
+    { name = "protobuf", specifier = ">=5.29" },
+    { name = "starlette", specifier = ">=0.46" },
+    { name = "uvicorn", specifier = ">=0.35" },
 ]
 
 [[package]]
@@ -1424,7 +1446,7 @@ wheels = [
     { url = "https://ms-feed-25.pkgs.visualstudio.com/6f084628-a36d-42cb-934d-057357e379dc/_packaging/49d7402f-07bb-4b18-a9ce-086e6e98a554/pypi/download/pyzmq/27.3/pyzmq-27.3.0-cp315-cp315t-musllinux_1_2_i686.whl", hash = "sha256:1f724caa222b1ae3c48f7d25147c816c8bde56fb109c164a650f0502b9005ab6", size = 2074632, upload-time = "2026-11-04T00:30:17Z" },
     { url = "https://ms-feed-25.pkgs.visualstudio.com/6f084628-a36d-42cb-934d-057357e379dc/_packaging/49d7402f-07bb-4b18-a9ce-086e6e98a554/pypi/download/pyzmq/27.3/pyzmq-27.3.0-cp315-cp315t-musllinux_1_2_x86_64.whl", hash = "sha256:129ca693e543940527e105144dcacdf9e0ec01d41421098e08893de8227aca58", size = 1903559, upload-time = "2026-11-04T00:30:19Z" },
     { url = "https://ms-feed-25.pkgs.visualstudio.com/6f084628-a36d-42cb-934d-057357e379dc/_packaging/49d7402f-07bb-4b18-a9ce-086e6e98a554/pypi/download/pyzmq/27.3/pyzmq-27.3.0-cp315-cp315t-win32.whl", hash = "sha256:39b9ff1fbab854ccbc53da0e79cb6b78b61b470fb7c191b89aa034825ea9a883", size = 596443, upload-time = "2026-11-04T00:30:20Z" },
-    { url = "https://ms-feed-25.pkgs.visualstudio.com/6f084628-a36d-42cb-934d-057357e379dc/_packaging/49d7402f-07bb-4b18-a9ce-086e6e98a554/pypi/download/pyzmq/27.3/pyzmq-27.3.0-cp315-cp315t-win_amd64.whl", hash = "sha256:3b850eaa955ae7edb926fe266600e57da818255d1f6ee9c3d8049967aa4a22cc", size = 684767, upload-time = "2026-11-04T00:30:22Z" },
+    { url = "https://ms-feed-25.pkgs.visualstudio.com/6f084628-a36d-42cb-934d-057357e379dc/_packaging/49d7402f-07bb-4b18-a9ce-086e6e98a554/pypi/download/pyzmq/27.3/pyzmq-27.3.0-cp315-cp315t-win_amd64.whl", hash = "sha256:3b850eaa955ae7edb926fe266600e57da818255d1f6ee9c3d8049967aa4a22cc", size = 684767, upload-time = "2026-11-17T19:21:20Z" },
     { url = "https://ms-feed-25.pkgs.visualstudio.com/6f084628-a36d-42cb-934d-057357e379dc/_packaging/49d7402f-07bb-4b18-a9ce-086e6e98a554/pypi/download/pyzmq/27.3/pyzmq-27.3.0-cp315-cp315t-win_arm64.whl", hash = "sha256:f0b9d192b285a9d38e390e762011f2672432742a301859b6c8cb4fab5f10f687", size = 594143, upload-time = "2026-11-04T00:30:24Z" },
     { url = "https://ms-feed-25.pkgs.visualstudio.com/6f084628-a36d-42cb-934d-057357e379dc/_packaging/49d7402f-07bb-4b18-a9ce-086e6e98a554/pypi/download/pyzmq/27.3/pyzmq-27.3.0-pp311-pypy311_pp80-macosx_10_15_x86_64.whl", hash = "sha256:78157e57c734e8fc6dbf28c76aafc2cd7e871780fc661825c75e0afdc3424a82", size = 689539, upload-time = "2026-11-16T00:37:30Z" },
     { url = "https://ms-feed-25.pkgs.visualstudio.com/6f084628-a36d-42cb-934d-057357e379dc/_packaging/49d7402f-07bb-4b18-a9ce-086e6e98a554/pypi/download/pyzmq/27.3/pyzmq-27.3.0-pp311-pypy311_pp80-macosx_11_0_arm64.whl", hash = "sha256:8f15e7f2b5cc6459c45619e06e61f02fd1d9138b677b56e7a677232251a873b7", size = 632029, upload-time = "2026-11-16T00:37:43Z" },
@@ -1584,7 +1606,7 @@ wheels = [
     { url = "https://ms-feed-25.pkgs.visualstudio.com/6f084628-a36d-42cb-934d-057357e379dc/_packaging/49d7402f-07bb-4b18-a9ce-086e6e98a554/pypi/download/tornado/6.6.1/tornado-6.6.1-cp315-cp315t-musllinux_1_2_s390x.whl", hash = "sha256:e923e75c9d641cdb8bbac60070a2dccdb684fc555af2bff48b0eaded0f88c2dc", size = 537798, upload-time = "2026-11-09T21:09:15Z" },
     { url = "https://ms-feed-25.pkgs.visualstudio.com/6f084628-a36d-42cb-934d-057357e379dc/_packaging/49d7402f-07bb-4b18-a9ce-086e6e98a554/pypi/download/tornado/6.6.1/tornado-6.6.1-cp315-cp315t-musllinux_1_2_x86_64.whl", hash = "sha256:a72f70b1aa630fa2106d39a025e2be75c272b7ec8233da94e2f407ea754cc32d", size = 537809, upload-time = "2026-11-09T21:09:17Z" },
     { url = "https://ms-feed-25.pkgs.visualstudio.com/6f084628-a36d-42cb-934d-057357e379dc/_packaging/49d7402f-07bb-4b18-a9ce-086e6e98a554/pypi/download/tornado/6.6.1/tornado-6.6.1-cp315-cp315t-win32.whl", hash = "sha256:2fbfd2510b6163b189773155a8246c025cb260ccc7cd12ad18c36c54f5617bb9", size = 535422, upload-time = "2026-11-09T21:09:18Z" },
-    { url = "https://ms-feed-25.pkgs.visualstudio.com/6f084628-a36d-42cb-934d-057357e379dc/_packaging/49d7402f-07bb-4b18-a9ce-086e6e98a554/pypi/download/tornado/6.6.1/tornado-6.6.1-cp315-cp315t-win_amd64.whl", hash = "sha256:3c35091add5863feb9cf651851bb1b23592f1f9551b5dfed72837c83ea4e5b85", size = 535713, upload-time = "2026-11-09T21:09:20Z" },
+    { url = "https://ms-feed-25.pkgs.visualstudio.com/6f084628-a36d-42cb-934d-057357e379dc/_packaging/49d7402f-07bb-4b18-a9ce-086e6e98a554/pypi/download/tornado/6.6.1/tornado-6.6.1-cp315-cp315t-win_amd64.whl", hash = "sha256:3c35091add5863feb9cf651851bb1b23592f1f9551b5dfed72837c83ea4e5b85", size = 535713, upload-time = "2026-11-17T19:21:27Z" },
     { url = "https://ms-feed-25.pkgs.visualstudio.com/6f084628-a36d-42cb-934d-057357e379dc/_packaging/49d7402f-07bb-4b18-a9ce-086e6e98a554/pypi/download/tornado/6.6.1/tornado-6.6.1-cp315-cp315t-win_arm64.whl", hash = "sha256:065bc741478b168df9baf754956a3010c04d1330bb45a84833d807c29e11b257", size = 535719, upload-time = "2026-11-09T21:09:21Z" },
 ]
 
@@ -1632,7 +1654,7 @@ wheels = [
     { url = "https://ms-feed-25.pkgs.visualstudio.com/6f084628-a36d-42cb-934d-057357e379dc/_packaging/49d7402f-07bb-4b18-a9ce-086e6e98a554/pypi/download/ty/0.0.100/ty-0.0.100-py3-none-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:2b684eab7e3d61de3a929416e38e9eb8ef1d6442feb13f0b94bc8e72e483763c", size = 15602690, upload-time = "2026-11-09T20:15:54Z" },
     { url = "https://ms-feed-25.pkgs.visualstudio.com/6f084628-a36d-42cb-934d-057357e379dc/_packaging/49d7402f-07bb-4b18-a9ce-086e6e98a554/pypi/download/ty/0.0.100/ty-0.0.100-py3-none-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:fddaddb71dd6019e5e32f9faa690a9851ec345ba8a59c02c82966bac4eee9afe", size = 16011216, upload-time = "2026-11-09T20:15:57Z" },
     { url = "https://ms-feed-25.pkgs.visualstudio.com/6f084628-a36d-42cb-934d-057357e379dc/_packaging/49d7402f-07bb-4b18-a9ce-086e6e98a554/pypi/download/ty/0.0.100/ty-0.0.100-py3-none-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:50f7ae81ff38eab05f13fdb2caccce9ebded08dbef0e4c680a23e91aae0bda6a", size = 15925281, upload-time = "2026-11-09T20:16:01Z" },
-    { url = "https://ms-feed-25.pkgs.visualstudio.com/6f084628-a36d-42cb-934d-057357e379dc/_packaging/49d7402f-07bb-4b18-a9ce-086e6e98a554/pypi/download/ty/0.0.100/ty-0.0.100-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:e23076fd67dc5c740a5cd292f3bbc10b82127dd01df3cb559e12b3144ceef72d", size = 16749475, upload-time = "2026-11-09T20:16:05Z" },
+    { url = "https://ms-feed-25.pkgs.visualstudio.com/6f084628-a36d-42cb-934d-057357e379dc/_packaging/49d7402f-07bb-4b18-a9ce-086e6e98a554/pypi/download/ty/0.0.100/ty-0.0.100-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:e23076fd67dc5c740a5cd292f3bbc10b82127dd01df3cb559e12b3144ceef72d", size = 16749475, upload-time = "2026-11-17T08:55:41Z" },
     { url = "https://ms-feed-25.pkgs.visualstudio.com/6f084628-a36d-42cb-934d-057357e379dc/_packaging/49d7402f-07bb-4b18-a9ce-086e6e98a554/pypi/download/ty/0.0.100/ty-0.0.100-py3-none-manylinux_2_31_riscv64.whl", hash = "sha256:a1006c1a8eff26bbbbc7e909ec43284e61478a3ac3aa1d7cf0c23120a4a2ac48", size = 15466325, upload-time = "2026-11-09T20:16:07Z" },
     { url = "https://ms-feed-25.pkgs.visualstudio.com/6f084628-a36d-42cb-934d-057357e379dc/_packaging/49d7402f-07bb-4b18-a9ce-086e6e98a554/pypi/download/ty/0.0.100/ty-0.0.100-py3-none-musllinux_1_2_aarch64.whl", hash = "sha256:fae832c5da4da1a1dc1952f0dc9b3655f2b2266c27b6d0c87b40d02cd1b02601", size = 14330127, upload-time = "2026-11-09T20:16:10Z" },
     { url = "https://ms-feed-25.pkgs.visualstudio.com/6f084628-a36d-42cb-934d-057357e379dc/_packaging/49d7402f-07bb-4b18-a9ce-086e6e98a554/pypi/download/ty/0.0.100/ty-0.0.100-py3-none-musllinux_1_2_armv7l.whl", hash = "sha256:f1a486d914fcb858bc02818f2684db3609207c8ab261256657bfe0fa51544855", size = 14622284, upload-time = "2026-11-09T20:16:13Z" },
@@ -1640,7 +1662,7 @@ wheels = [
     { url = "https://ms-feed-25.pkgs.visualstudio.com/6f084628-a36d-42cb-934d-057357e379dc/_packaging/49d7402f-07bb-4b18-a9ce-086e6e98a554/pypi/download/ty/0.0.100/ty-0.0.100-py3-none-musllinux_1_2_x86_64.whl", hash = "sha256:51926133e69153748ca27e9079802baf8cdda7170ec40eea037752117754cb32", size = 15377827, upload-time = "2026-11-09T20:16:17Z" },
     { url = "https://ms-feed-25.pkgs.visualstudio.com/6f084628-a36d-42cb-934d-057357e379dc/_packaging/49d7402f-07bb-4b18-a9ce-086e6e98a554/pypi/download/ty/0.0.100/ty-0.0.100-py3-none-win32.whl", hash = "sha256:6eeb12edfb3608427aa657983b1ddad1d0c73915752d092bfe5c35315804b071", size = 13789591, upload-time = "2026-11-09T20:16:20Z" },
     { url = "https://ms-feed-25.pkgs.visualstudio.com/6f084628-a36d-42cb-934d-057357e379dc/_packaging/49d7402f-07bb-4b18-a9ce-086e6e98a554/pypi/download/ty/0.0.100/ty-0.0.100-py3-none-win_amd64.whl", hash = "sha256:01c230d3046f0d5e8ab6e1def4131aab21659a1d290cc88b39b4fde04bfad0c0", size = 14440120, upload-time = "2026-11-17T06:30:20Z" },
-    { url = "https://ms-feed-25.pkgs.visualstudio.com/6f084628-a36d-42cb-934d-057357e379dc/_packaging/49d7402f-07bb-4b18-a9ce-086e6e98a554/pypi/download/ty/0.0.100/ty-0.0.100-py3-none-win_arm64.whl", hash = "sha256:e5ef15fae8544582d03c78b5287abd18eac78e5f21dff80b5febb2e038e97205", size = 13909648, upload-time = "2026-11-09T20:16:25Z" },
+    { url = "https://ms-feed-25.pkgs.visualstudio.com/6f084628-a36d-42cb-934d-057357e379dc/_packaging/49d7402f-07bb-4b18-a9ce-086e6e98a554/pypi/download/ty/0.0.100/ty-0.0.100-py3-none-win_arm64.whl", hash = "sha256:e5ef15fae8544582d03c78b5287abd18eac78e5f21dff80b5febb2e038e97205", size = 13909648, upload-time = "2026-11-17T19:50:23Z" },
 ]
 
 [[package]]

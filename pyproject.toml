@@ -9,10 +9,13 @@ dependencies = []
 package = false
 
 [tool.uv.workspace]
-members = ["services/*"]
+members = ["src/deck-router", "src/mock"]
+
+[tool.uv.sources]
+downstream-mock = { workspace = true }
 
 [tool.pytest.ini_options]
-testpaths = ["services/deck-router/tests"]
+testpaths = ["src/deck-router/tests"]
 
 [tool.ruff]
 target-version = "py311"
@@ -22,10 +25,11 @@ line-length = 100
 select = ["E", "F", "I", "UP", "B"]
 
 [tool.ty.src]
-include = ["services/deck-router/src", "services/deck-router/tests"]
+include = ["src/deck-router/src", "src/deck-router/tests", "src/mock/downstream_mock"]
 
 [dependency-groups]
 dev = [
+    "downstream-mock",
     "httpx",
     "ipykernel",
     "ipywidgets",

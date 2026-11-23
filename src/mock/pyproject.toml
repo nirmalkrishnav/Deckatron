@@ -1,0 +1,18 @@
+[project]
+name = "downstream-mock"
+version = "0.1.0"
+description = "Local A2A echo mock for deck creation and editing"
+requires-python = ">=3.11"
+dependencies = [
+    "a2a-sdk[http-server]==1.3.0",
+    "protobuf>=5.29",
+    "starlette>=0.46",
+    "uvicorn>=0.35",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["downstream_mock"]

@@ -1,11 +1,11 @@
 ---
 title: Deckatron
-description: Decision-1 and LLM routing gateway with reusable typed model utilities
+description: Decision-1 and LLM routing gateway with a TypeScript A2A deck-builder placeholder
 ---
 
 ## What this project does
 
-`services\deck-router` is an independently runnable Python A2A service.
+[src/deck-router](src/deck-router) is an independently runnable Python A2A service.
 It replaces the sample A2A `ping` skill with `route_deck_request`:
 
 1. Receive user instructions and optional JSON/PPTX files through an A2A API request.
@@ -15,8 +15,20 @@ It replaces the sample A2A `ping` skill with `route_deck_request`:
 5. Relay its message, generated file, layout review, or task back to the API client.
 
 The router does not create, inspect, or edit PowerPoint files itself.
-There are no generator/editor implementations, terminal prompts, UI, Docker,
-or Nginx components here. The existing downstream services own those workflows.
+The TypeScript [deck-builder package](src/deck-builder) provides a runnable
+creation placeholder, not a generator. There is still no PowerPoint generator
+or editor implementation, terminal UI, Docker, or Nginx component here.
+Real generation and editing remain downstream-service responsibilities.
+
+### Repository layout
+
+* [src/deck-router](src/deck-router): Python router package, source and tests.
+* [src/mock/downstream_mock](src/mock/downstream_mock): independently packaged Python echo mock.
+* [src/deck-builder](src/deck-builder): TypeScript creation placeholder.
+* Root [pyproject.toml](pyproject.toml) and [uv.lock](uv.lock): shared Python
+  workspace configuration and locked dependencies. The TypeScript package uses npm.
+* One common root `.env`: router/model configuration and `DECK_BUILDER_PORT`.
+  Run the commands below from the workspace root.
 
 ## Setup
 
@@ -34,6 +46,7 @@ Configure the placeholders in the common root `.env`:
 DECK_ROUTER_CREATOR_URL=http://localhost:8001
 DECK_ROUTER_EDITOR_URL=http://localhost:8002
 DECK_ROUTER_SELECTOR=decision
+DECK_BUILDER_PORT=8001
 AZURE_DECISION_ENDPOINT=https://YOUR-RESOURCE.services.ai.azure.com/providers/microsoft
 DECISION_API_KEY=YOUR-KEY
 DECISION_MODEL=Decision-1
@@ -88,7 +101,7 @@ Empty placeholders allow health checks and discovery before configuration.
 Routing attempts report explicit errors until services and the selected model are set up.
 There is no silent keyword fallback when a model request fails.
 
-Run from the workspace root. Only `deck_router.utils.settings` loads `.env` from
+Run from the workspace root. Within Python, only `deck_router.utils.settings` loads `.env` from
 the working directory; it does not search parent folders or mutate the process
 environment. Explicit settings values override process environment, which overrides
 dotenv values. Unrelated shared-file keys are ignored.
@@ -154,7 +167,7 @@ resources close after each call. Failures raise `DecisionClientError` or
 ## Run with Uvicorn
 
 ```powershell
-uv run --package deck-router uvicorn deck_router.app:create_app --factory --host 127.0.0.1 --port 8000 --reload --reload-dir services\deck-router\src
+uv run --package deck-router uvicorn deck_router.app:create_app --factory --host 127.0.0.1 --port 8000 --reload --reload-dir src\deck-router\src
 ```
 
 Or use the launcher, which reads its bind address and port from the environment:
@@ -172,14 +185,14 @@ publicly without those controls.
 
 ### Run a local downstream mock
 
-The single-file `services\deck-router\src\downstream_mock\api.py` service advertises
+The single-file [src/mock/downstream_mock/api.py](src/mock/downstream_mock/api.py) service advertises
 both creation and editing skills and returns the user's text in a mock-success
 response. It does not generate PPTX files or simulate the layout-review workflow.
 
 Start it in a second terminal from the workspace root:
 
 ```powershell
-uv run --package deck-router uvicorn downstream_mock.api:app --host 127.0.0.1 --port 8001 --reload
+uv run --package downstream-mock uvicorn downstream_mock.api:app --host 127.0.0.1 --port 8001 --reload --reload-dir src\mock
 ```
 
 Set both downstream URLs in the root `.env` to the same mock:
@@ -214,6 +227,67 @@ data are not processed or echoed. The mock also exposes `GET /ping` and
 `GET /.well-known/agent-card.json`. You can change its Uvicorn port and use that
 same port in both downstream URLs; its card advertises the incoming request origin.
 This unauthenticated echo server is for local development only.
+
+## Run the TypeScript deck-builder placeholder
+
+Requires Node.js 22.9+ and npm for the native optional dotenv-file startup flag.
+Use a supported Node LTS release. From the workspace root, install the package-local locked dependencies,
+check types, build, and start:
+
+```powershell
+npm.cmd --prefix src\deck-builder ci
+npm.cmd --prefix src\deck-builder run typecheck
+npm.cmd --prefix src\deck-builder run build
+npm.cmd --prefix src\deck-builder start
+```
+
+The service binds only to `127.0.0.1:8001`. `npm start` loads the common root
+`.env`, if present, without a package-local copy. Set `DECK_BUILDER_PORT` there
+to choose another port from `1` to `65535`; a process-environment value overrides
+the file. Invalid values fail startup instead of falling back. Stop it with `Ctrl+C`.
+
+For a complete local router setup, start the existing mock as a separately
+discoverable editor in another terminal:
+
+```powershell
+uv run --package downstream-mock uvicorn downstream_mock.api:app --host 127.0.0.1 --port 8002
+```
+
+Configure the router's root `.env` and restart the router:
+
+```dotenv
+DECK_ROUTER_CREATOR_URL=http://127.0.0.1:8001
+DECK_ROUTER_EDITOR_URL=http://127.0.0.1:8002
+```
+
+Use the creator's exact advertised origin: `127.0.0.1`, not `localhost`, and the
+selected port. Both workers must be discoverable for new routed requests.
+Normal routing still calls your configured Decision-1 or LLM selector; the
+builder does not bypass it or implement editing.
+
+The builder exposes `GET /ping`, `GET /.well-known/agent-card.json`, and A2A 1.0
+JSON-RPC `POST /`. Send `SendMessage` with `A2A-Version: 1.0` and user text.
+It returns one immediate agent message with one JSON data part. Its application
+payload is exactly:
+
+```json
+{
+  "status": "placeholder",
+  "request": "Create a deck about sales",
+  "message": "Deck generation is not implemented. No presentation was created."
+}
+```
+
+The package exports the [DeckBuildResult class](src/deck-builder/index.ts);
+HTTP callers receive its serialized JSON, not a live JavaScript instance.
+All text parts are joined with newlines, preserving their content and whitespace.
+Missing or blank instructions and non-user messages produce JSON-RPC errors.
+Additional data, file and URL parts are ignored, not parsed, persisted, echoed,
+or fetched.
+
+No presentation, file, artifact, or task is generated. Streaming and task
+workflows are unsupported. This unauthenticated, loopback-only service is a
+local development placeholder, not a production deployment.
 
 ## API
 
@@ -333,15 +407,50 @@ Provider/transport failures are explicit errors, never success-shaped responses.
 ## Verify
 
 ```powershell
-uv run --all-packages pytest services\deck-router\tests
-uv run --all-packages ruff check services\deck-router
-uv run --all-packages ruff format --check services\deck-router
+uv run --all-packages pytest src\deck-router\tests
+uv run --all-packages ruff check src\deck-router src\mock
+uv run --all-packages ruff format --check src\deck-router src\mock
 uv run --all-packages ty check
 ```
 
 By default, tests use the real TypeSafe and Azure SDKs and A2A client/ASGI routes
 with mocked HTTP boundaries. They do not consume model credits, contact your
 configured services, or implement a generator/editor.
+
+### Verify the TypeScript creator and router boundary
+
+After installing the package dependencies, run the seven direct contract tests:
+
+```powershell
+npm.cmd --prefix src\deck-builder test
+```
+
+This builds the package and uses Node's built-in test runner. The additional
+Python-to-Node integration is opt-in; the ordinary Python suite needs no Node.
+It starts and stops its own isolated creator, supplies mock editor discovery,
+and selects creation deterministically without any model calls or credentials.
+An opted-in run fails if Node is missing from PATH or the package is not built.
+
+From the workspace root, with the package built:
+
+```powershell
+$priorBuilderFlag = [Environment]::GetEnvironmentVariable(
+    "DECK_ROUTER_BUILDER_INTEGRATION_TESTS", "Process")
+$priorLiveFlag = [Environment]::GetEnvironmentVariable(
+    "DECK_ROUTER_LIVE_DECISION_TESTS", "Process")
+try {
+    $env:DECK_ROUTER_LIVE_DECISION_TESTS = "0"
+    $env:DECK_ROUTER_BUILDER_INTEGRATION_TESTS = "1"
+    uv run --all-packages pytest src\deck-router\tests\test_deck_builder.py -q
+} finally {
+    [Environment]::SetEnvironmentVariable(
+        "DECK_ROUTER_BUILDER_INTEGRATION_TESTS", $priorBuilderFlag, "Process")
+    [Environment]::SetEnvironmentVariable(
+        "DECK_ROUTER_LIVE_DECISION_TESTS", $priorLiveFlag, "Process")
+}
+```
+
+### Optional paid live regression
 
 An optional live regression checks explicit creation, explicit editing, and
 ambiguous requests against your running local router and echo mock. Start both
@@ -351,7 +460,7 @@ This makes three paid Decision-1 calls using synthetic sales data:
 ```powershell
 $env:DECK_ROUTER_LIVE_DECISION_TESTS = "1"
 try {
-    uv run --all-packages pytest services\deck-router\tests\test_downstream_mock.py -k live_router -v
+    uv run --all-packages pytest src\deck-router\tests\test_downstream_mock.py -k live_router -v
 } finally {
     Remove-Item Env:\DECK_ROUTER_LIVE_DECISION_TESTS
 }

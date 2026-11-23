@@ -13,3 +13,4 @@ htmlcov/
 build/
 dist/
 .ipynb_checkpoints/
+node_modules/
